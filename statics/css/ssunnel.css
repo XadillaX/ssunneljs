@@ -1,0 +1,14 @@
+body {
+    padding: 0;
+    margin: 0;
+
+    font-family: "vollkorn";
+    font-weight: 300;
+
+    background: url("../images/bg.jpg") repeat;
+}
+
+.launch.item {
+    font-family: "playfair display";
+    font-weight: 700;
+}
