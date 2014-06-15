@@ -12,3 +12,21 @@ body {
     font-family: "playfair display";
     font-weight: 700;
 }
+
+#list-panel {
+    width: 480px;
+    margin: 0 auto 0 auto;
+    padding: 70px 0 0 0;
+}
+
+#main-panel {
+    width: 480px;
+    margin: 20px auto 0 auto;
+}
+
+.ui.form input[type=text],
+.ui.form input[type=password] {
+    font-family: "cardo";
+    font-weight: 400;
+    font-style: italic;
+}

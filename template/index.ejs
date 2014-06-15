@@ -7,26 +7,36 @@
 `\____)(____/`\___/'(_) (_)(_) (_)`\____)(___)`\___/'`\____)
 -->
 <!DOCTYPE html>
-<html>
+<html ng-app>
 <head>
     <link href='http://fonts.googleapis.com/css?family=Abril+Fatface|Open+Sans:300,400,600,700,800|Gentium+Book+Basic:400,400italic|Vollkorn:400italic,400' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Gravitas+One|Lato:100,900|Old+Standard+TT:400,400italic|PT+Serif:400|PT+Sans+Narrow:700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=PT+Sans:700|Merriweather:400,900|Playfair+Display:400,900,700italic|Oswald:700|PT+Mono' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Cardo:400,400italic' rel='stylesheet' type='text/css'>
 
+    <meta name="viewport" content="target-densitydpi=device-dpi,initial-scale=1" />
     <meta charset="utf-8">
     <meta name="author" content="XadillaX">
     <meta name="description" content="Ssunnel -- An easy ssh-tunnel web ui tool.">
     <meta name="keywords" content="Ssunnel">
     <title>SsunelJS - (ﾟ3ﾟ)～♪</title>
 
+    <script src="/javascript/jquery-2.1.1.min.js"></script>
+
+    <script src="/vex/js/vex.combined.min.js"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-os';</script>
+    <link rel="stylesheet" href="/vex/css/vex.css" />
+    <link rel="stylesheet" href="/vex/css/vex-theme-os.css" />
+
     <link rel="stylesheet" href="/css/semantic.min.css">
     <link rel="stylesheet" href="/css/ssunnel.css">
-    <script src="/javascript/jquery-2.1.1.min.js"></script>
+
     <script src="/javascript/semantic.min.js"></script>
+    <script src="/javascript/angular.min.js"></script>
     <script src="/javascript/ssunnel.js"></script>
+    <script src="/javascript/controller/index.js"></script>
 </head>
-<body>
+<body class="ng-cloak" ng-controller="indexController">
 <div class="ui fixed transparent inverted main menu">
     <div class="container">
         <a href="/" class="launch item"><i class="icon rocket layout"></i> SsunnelJS</a>
@@ -35,72 +45,105 @@
     </div>
 </div>
 
-<div style="padding: 70px;" class="segment">
-    <div class="ui three column grid">
-        <div class="row">
-            <div class="column"></div>
-            <div class="column">
-                <div class="ui form segment">
-                    <div class="field">
-                        <label for="remote-host">Remote Host</label>
-                        <div class="ui left labeled icon input">
-                            <input type="text" id="remote-host" placeholder="Remote host...">
-                            <i class="desktop icon"></i>
-                            <div class="ui corner label">
-                                <i class="icon asterisk"></i>
-                            </div>
-                        </div>
-                    </div>
+<div id="list-panel">
+    <div class="ui segment">
+        <h4 class="ui header">Tunnel List</h4>
 
-                    <div class="ui two fields">
-                        <div class="column field">
-                            <label for="remote-port">Remote Port</label>
-                            <div class="ui left labeled icon input">
-                                <input type="text" id="remote-port" placeholder="Remote port...">
-                                <i class="screenshot icon"></i>
-                                <div class="ui corner label">
-                                    <i class="icon asterisk"></i>
-                                </div>
-                            </div>
+        <table class="ui table segment">
+            <thead>
+            <tr>
+                <th>Remote</th>
+                <th>Local Port</th>
+                <th>Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="tunnel in list" id="tunnel-{{ tunnel.tunnelId }}">
+                <td>{{ tunnel.host }}:{{ tunnel.remotePort }}</td>
+                <td>{{ tunnel.localPort }}</td>
+                <td>
+                    <div class="ui tiny buttons">
+                        <div ng-click="tunnelAction(tunnel.tunnelId);" class="ui button">
+                            <i class="{{ tunnel.connected ? 'unlink' : 'plane' }} icon"></i>
                         </div>
-                        <div class="column field">
-                            <label for="remote-port">Local Port</label>
-                            <div class="ui left labeled icon input">
-                                <input type="text" id="local-port" placeholder="Local port...">
-                                <i class="unhide icon"></i>
-                                <div class="ui corner label">
-                                    <i class="icon asterisk"></i>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="or"></div>
+                        <div ng-click="delTunnel(tunnel.tunnelId);" class="ui button"><i class="remove sign icon"></i></div>
                     </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-                    <div class="field">
-                        <label for="username">Username</label>
-                        <div class="ui left labeled icon input">
-                            <input type="text" id="username" placeholder="Username...">
-                            <i class="user icon"></i>
-                            <div class="ui corner label">
-                                <i class="icon asterisk"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label for="password">Password</label>
-                        <div class="ui left labeled icon input">
-                            <input type="password" id="password" placeholder="Password...">
-                            <i class="circle icon"></i>
-                            <div class="ui corner label">
-                                <i class="icon asterisk"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="fluid ui green submit button">Connect</div>
+<div id="main-panel">
+    <div class="ui form segment">
+        <div class="field">
+            <label for="remote-host">Remote Host</label>
+            <div class="ui left labeled icon input">
+                <input ng-keyup="addTunnelPre($event);"
+                       ng-model="remoteHost" type="text" id="remote-host" placeholder="Remote host...">
+                <i class="desktop icon"></i>
+                <div class="ui corner label">
+                    <i class="icon asterisk"></i>
                 </div>
             </div>
-            <div class="column"></div>
+        </div>
+
+        <div class="ui two fields">
+            <div class="column field">
+                <label for="remote-port">Remote Port</label>
+                <div class="ui left labeled icon input">
+                    <input ng-keyup="addTunnelPre($event);"
+                           ng-model="remotePort" type="text" id="remote-port" placeholder="Remote port...">
+                    <i class="screenshot icon"></i>
+                    <div class="ui corner label">
+                        <i class="icon asterisk"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="column field">
+                <label for="local-port">Local Port</label>
+                <div class="ui left labeled icon input">
+                    <input ng-keyup="addTunnelPre($event);"
+                           ng-model="localPort" type="text" id="local-port" placeholder="Local port...">
+                    <i class="unhide icon"></i>
+                    <div class="ui corner label">
+                        <i class="icon asterisk"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="username">Username</label>
+            <div class="ui left labeled icon input">
+                <input ng-keyup="addTunnelPre($event);"
+                       ng-model="username" type="text" id="username" placeholder="Username...">
+                <i class="user icon"></i>
+                <div class="ui corner label">
+                    <i class="icon asterisk"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="pkfilename">Private Key Filename</label>
+            <div class="ui left labeled icon input">
+                <input ng-keyup="addTunnelPre($event);"
+                       ng-model="pkfilename" type="text" id="pkfilename" placeholder="Private key filename...">
+                <i class="key icon"></i>
+                <div class="ui corner label">
+                    <i class="icon asterisk"></i>
+                </div>
+            </div>
+        </div>
+
+        <div ng-click="addTunnel(remoteHost.trim(), remotePort.trim(), localPort.trim(), username.trim(), pkfilename);" class="fluid ui green animated fade submit button">
+            <div class="visible content">Add</div>
+            <div class="hidden content">
+                Add a tunnel between two machines
+            </div>
         </div>
     </div>
 </div>

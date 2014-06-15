@@ -108,6 +108,7 @@ exports.getController = function(controllerName) {
         try {
             controller = require(filename);
         } catch(e) {
+            console.error("An error occurred while creating controller `" + controller + "`: " + e.message);
             controller = null;
             return controller;
         }

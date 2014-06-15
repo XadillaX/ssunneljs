@@ -16,5 +16,13 @@ function moveBackground() {
 }
 
 $(function() {
+    alert = function(content) {
+        if(typeof content === "object") {
+            content = JSON.stringify();
+        }
+
+        vex.dialog.alert(content);
+    };
+
     setInterval(moveBackground, 100);
 });

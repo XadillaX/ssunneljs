@@ -73,18 +73,15 @@ async.waterfall([
 
     /**
      * step 3:
-     *   connect to the database.
+     *   tunnels initializion...
      *
      * @param callback
      */
     function(callback) {
-        // if mongodb is configured.
-        if(config.mongodb) {
-            mongodbConnect(callback);
-        } else {
-            callback();
-        }
-    }
+        var tunnelModel = require("./model/tunnelModel");
+        tunnelModel.init();
+        callback();
+    },
 ], function(err) {
     if(err) {
         return console.log("An error occurred while initialing the system: " + err.message);

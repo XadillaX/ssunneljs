@@ -25,3 +25,6 @@ build/Release
 node_modules
 
 .idea
+tunnels.json
+*_rsa
+*_rsa.pub
