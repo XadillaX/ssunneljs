@@ -81,8 +81,9 @@ exports.connect = function(tunnelId, callback) {
                 }
 
                 tunnel.connected = true;
+                //console.log(tunnel);
                 var child = childProcess.spawn("plink",
-                    [ "-i", tunnel.config.pkfilename, "-C", "-N", "-R",
+                    [ "-pw", tunnel.config.password, "-C", "-N", "-R",
                             tunnel.config.host + ":" + tunnel.config.remotePort + ":127.0.0.1:" + tunnel.config.localPort,
                             tunnel.config.username + "@" + tunnel.config.host
                     ], {
@@ -100,16 +101,20 @@ exports.connect = function(tunnelId, callback) {
                         child.kill("SIGINT");
                         tunnel.child = undefined;
                         tunnel.connected = false;
-                        tunnel.flashMsg = "Wrong private key file of tunnel [" + i + "].";
+                        tunnel.flashMsg = "Wrong password of tunnel [" + i + "].";
                     }
                     console.log("std: " + data);
                 });
                 child.stderr.setEncoding('utf8');
                 child.stderr.on("data", function(data) {
-                    child.kill("SIGINT");
-                    tunnel.child = undefined;
-                    tunnel.connected = false;
-                    tunnel.flashMsg = "An error occurred while connecting to tunnel [" + i + "]: " + data;
+                    if(/Store key in cache\? \(y\/n\)/.test(data)) {
+                        child.stdin.write("y\n");
+                    } else {
+                        child.kill("SIGINT");
+                        tunnel.child = undefined;
+                        tunnel.connected = false;
+                        tunnel.flashMsg = "An error occurred while connecting to tunnel [" + i + "]: " + data;
+                    }
 
                     console.log("err: " + data);
                 });
@@ -174,16 +179,16 @@ exports.getList = function(flash) {
  * @param remotePort
  * @param localPort
  * @param username
- * @param pkfilename
+ * @param password
  */
-exports.addTunnel = function(host, remotePort, localPort, username, pkfilename) {
+exports.addTunnel = function(host, remotePort, localPort, username, password) {
     var config = {
         tunnelId    : moment().valueOf(),
         host        : host,
         remotePort  : remotePort,
         localPort   : localPort,
         username    : username,
-        pkfilename  : pkfilename
+        password    : password
     };
 
     var object = {

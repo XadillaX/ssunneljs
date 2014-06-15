@@ -99,7 +99,7 @@ exports.addTunnel = function(req, resp) {
     var remotePort = req.body.remotePort;
     var localPort = req.body.localPort;
     var username = req.body.username;
-    var pkfilename = req.body.pkfilename;
+    var password = req.body.password;
 
     remotePort = parseInt(remotePort);
     localPort = parseInt(localPort);
@@ -120,7 +120,7 @@ exports.addTunnel = function(req, resp) {
         return;
     }
 
-    var json = tunnel.addTunnel(host, remotePort, localPort, username, pkfilename);
+    var json = tunnel.addTunnel(host, remotePort, localPort, username, password);
 
     resp.send(200, {
         status      : true,

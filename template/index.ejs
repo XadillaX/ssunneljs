@@ -128,10 +128,10 @@
         </div>
 
         <div class="field">
-            <label for="pkfilename">Private Key Filename</label>
+            <label for="password">Password</label>
             <div class="ui left labeled icon input">
                 <input ng-keyup="addTunnelPre($event);"
-                       ng-model="pkfilename" type="text" id="pkfilename" placeholder="Private key filename...">
+                       ng-model="password" type="password" id="password" placeholder="Password...">
                 <i class="key icon"></i>
                 <div class="ui corner label">
                     <i class="icon asterisk"></i>
@@ -139,7 +139,7 @@
             </div>
         </div>
 
-        <div ng-click="addTunnel(remoteHost.trim(), remotePort.trim(), localPort.trim(), username.trim(), pkfilename);" class="fluid ui green animated fade submit button">
+        <div ng-click="addTunnel(remoteHost.trim(), remotePort.trim(), localPort.trim(), username.trim(), password);" class="fluid ui green animated fade submit button">
             <div class="visible content">Add</div>
             <div class="hidden content">
                 Add a tunnel between two machines

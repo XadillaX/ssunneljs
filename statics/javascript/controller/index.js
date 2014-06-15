@@ -83,7 +83,7 @@ var indexController = function($scope) {
      */
     $scope.addTunnelPre = function($event) {
         if($event.keyCode !== 13) return;
-        this.addTunnel(this.remoteHost, this.remotePort, this.localPort, this.username, this.pkfilename);
+        this.addTunnel(this.remoteHost, this.remotePort, this.localPort, this.username, this.password);
     };
 
     /**
@@ -92,9 +92,9 @@ var indexController = function($scope) {
      * @param remotePort
      * @param localPort
      * @param username
-     * @param pkfilename
+     * @param password
      */
-    $scope.addTunnel = function(remoteHost, remotePort, localPort, username, pkfilename) {
+    $scope.addTunnel = function(remoteHost, remotePort, localPort, username, password) {
         if(!remoteHost || !remotePort || !localPort || !username) {
             alert("Please fill the blanks.");
             return;
@@ -106,7 +106,7 @@ var indexController = function($scope) {
             remotePort  : remotePort,
             localPort   : localPort,
             username    : username,
-            pkfilename  : pkfilename
+            password    : password
         }, function(e) {
             if(!e.status) {
                 alert(e.msg);
@@ -116,7 +116,7 @@ var indexController = function($scope) {
                 $scope.remotePort = "";
                 $scope.localPort = "";
                 $scope.username = "";
-                $scope.pkfilename = "";
+                $scope.password = "";
 
                 $scope.list = e.list;
                 $scope.$apply();
