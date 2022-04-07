@@ -4,7 +4,7 @@
   "description": "An easy ssh-tunnel web ui tool.",
   "main": "ssunnel.js",
   "dependencies": {
-    "async": "~0.8.0",
+    "async": "~3.2.2",
     "ejs": "~1.0.0",
     "express": "~3.6.0",
     "log4js": "~0.6.14",
